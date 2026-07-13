@@ -1,8 +1,11 @@
 const STORAGE_KEY='plano-estudos-v1';
 const initialCourses=[
-  {id:'python',name:'Formação em Python',color:'#20639b'},
-  {id:'fiap',name:'FIAP — Big Data',color:'#3caea3'},
-  {id:'challenge',name:'Tech Challenge',color:'#f6a623'}
+  {id:'fiap',name:'Big Data to Analytics',color:'#ed1c24',platform:'fiap',order:1},
+  {id:'challenge',name:'Tech Challenge',color:'#f05a62',platform:'fiap',order:2},
+  {id:'python',name:'Formação em Python',color:'#20639b',platform:'etek',order:1,status:'current'},
+  {id:'ia',name:'Trilha de Inteligência Artificial',color:'#7c5ce5',platform:'etek',order:2,status:'planned'},
+  {id:'powerbi',name:'Trilha de Power BI',color:'#f6a623',platform:'etek',order:3,status:'planned'},
+  {id:'automacao',name:'Trilha de Automação',color:'#3caea3',platform:'etek',order:4,status:'planned'}
 ];
 const rows=[
 ['2026-07-13','python','Preparação','Instalação do Python, VS Code e primeiros códigos',60],['2026-07-14','python','Fundamentos','Print, variáveis e operadores',60],['2026-07-15','python','Fundamentos','Strings, input e formatação',60],['2026-07-16','python','Estruturas','Listas, tuplas e dicionários',60],['2026-07-17','python','Lógica','If, for e while',60],['2026-07-18','python','Prática','Exercício de revisão dos fundamentos',60],
@@ -13,7 +16,8 @@ const rows=[
 const initialState={courses:initialCourses,sessions:rows.map((r,i)=>({id:`s${i+1}`,date:r[0],courseId:r[1],module:r[2],title:r[3],minutes:r[4],done:false,completedAt:null})),theme:'light'};
 let state=loadState();let installPrompt=null;
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
-function loadState(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||structuredClone(initialState)}catch{return structuredClone(initialState)}}
+function loadState(){try{return migrateState(JSON.parse(localStorage.getItem(STORAGE_KEY))||structuredClone(initialState))}catch{return structuredClone(initialState)}}
+function migrateState(saved){saved.courses=saved.courses||[];initialCourses.forEach(base=>{const found=saved.courses.find(c=>c.id===base.id);if(found)Object.assign(found,base);else saved.courses.push({...base})});saved.sessions=saved.sessions||[];saved.theme=saved.theme||'light';return saved}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));render()}
 function course(id){return state.courses.find(c=>c.id===id)||{name:'Outro',color:'#7c5ce5'}}
 function fmtMinutes(m){const h=Math.floor(m/60),min=m%60;return h?`${h}h${min?` ${min}min`:''}`:`${min}min`}
@@ -23,7 +27,17 @@ function sessionCard(s){const c=course(s.courseId),d=dateParts(s.date);return `<
 function escapeHtml(v){const d=document.createElement('div');d.textContent=v;return d.innerHTML}
 function render(){document.documentElement.classList.toggle('dark',state.theme==='dark');$('#themeBtn').textContent=state.theme==='dark'?'☀':'☾';const total=state.sessions.reduce((a,s)=>a+s.minutes,0),done=state.sessions.filter(s=>s.done).reduce((a,s)=>a+s.minutes,0),pct=total?Math.round(done/total*100):0;$('#totalHours').textContent=fmtMinutes(total);$('#doneHours').textContent=fmtMinutes(done);$('#remainingCount').textContent=state.sessions.filter(s=>!s.done).length;$('#progressPercent').textContent=`${pct}%`;$('#progressRing').style.strokeDashoffset=308-(308*pct/100);$('#streak').textContent=`${calcStreak()} dias`;const now=new Date();$('#todayLabel').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});const next=state.sessions.filter(s=>!s.done).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);$('#heroTitle').textContent=next[0]?`Próximo: ${next[0].title}`:'Plano concluído!';$('#heroSubtitle').textContent=next[0]?`${dateParts(next[0].date).full} • ${fmtMinutes(next[0].minutes)}`:'Você concluiu todas as sessões.';$('#nextSessions').innerHTML=next.length?next.map(sessionCard).join(''):'<div class="empty">Nenhuma sessão pendente. Que conquista!</div>';renderPlan();renderCourses();fillCourseOptions();bindChecks()}
 function renderPlan(){const track=$('#trackFilter').value||'all',status=$('#statusFilter').value||'all';const list=state.sessions.filter(s=>(track==='all'||s.courseId===track)&&(status==='all'||(status==='done'&&s.done)||(status==='pending'&&!s.done))).sort((a,b)=>a.date.localeCompare(b.date));let month='';$('#allSessions').innerHTML=list.map(s=>{const m=localDate(s.date).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});const head=m!==month?`<div class="timeline-month">${month=m}</div>`:'';return head+sessionCard(s)}).join('')||'<div class="empty">Nenhuma sessão encontrada.</div>';bindChecks()}
-function renderCourses(){$('#courseGrid').innerHTML=state.courses.map(c=>{const ss=state.sessions.filter(s=>s.courseId===c.id),done=ss.filter(s=>s.done).length,p=ss.length?Math.round(done/ss.length*100):0;return `<article class="course-card" style="--course-color:${c.color}"><h3>${escapeHtml(c.name)}</h3><p class="meta">${ss.length} sessões • ${fmtMinutes(ss.reduce((a,s)=>a+s.minutes,0))}</p><div class="course-progress"><span style="width:${p}%"></span></div><footer><span>${done} concluídas</span><strong>${p}%</strong></footer></article>`}).join('')||'<div class="empty">Adicione seu primeiro curso.</div>'}
+function courseMetrics(c){const ss=state.sessions.filter(s=>s.courseId===c.id),done=ss.filter(s=>s.done).length,p=ss.length?Math.round(done/ss.length*100):0;return{ss,done,p,minutes:ss.reduce((a,s)=>a+s.minutes,0)}}
+function compactCourse(c){const m=courseMetrics(c);return `<article class="mini-course" style="--course-color:${c.color}"><div><span class="mini-dot"></span><h4>${escapeHtml(c.name)}</h4><p>${m.ss.length} sessões • ${fmtMinutes(m.minutes)}</p></div><strong>${m.p}%</strong><div class="mini-progress"><span style="width:${m.p}%"></span></div></article>`}
+function renderCourses(){
+  const fiap=state.courses.filter(c=>c.platform==='fiap').sort((a,b)=>a.order-b.order);
+  $('#fiapCourses').innerHTML=fiap.map(compactCourse).join('');
+  const etek=state.courses.filter(c=>c.platform==='etek').sort((a,b)=>a.order-b.order);
+  $('#etekRoadmap').innerHTML=etek.map((c,i)=>{const m=courseMetrics(c),active=c.status==='current',complete=m.p===100&&m.ss.length>0;return `<article class="roadmap-step ${active?'active':''} ${complete?'complete':''}" style="--course-color:${c.color}"><div class="step-number">${complete?'✓':i+1}</div><div class="step-copy"><span>${active?'EM ANDAMENTO':complete?'CONCLUÍDA':'PRÓXIMA ETAPA'}</span><h4>${escapeHtml(c.name)}</h4><p>${m.ss.length?`${m.ss.length} sessões planejadas • ${m.p}% concluído`:'Será planejada quando você iniciar esta trilha.'}</p>${m.ss.length?`<div class="mini-progress"><span style="width:${m.p}%"></span></div>`:''}</div></article>`}).join('');
+  const others=state.courses.filter(c=>!c.platform||c.platform==='other');
+  $('.other-courses').hidden=!others.length;
+  $('#courseGrid').innerHTML=others.map(c=>{const m=courseMetrics(c);return `<article class="course-card" style="--course-color:${c.color}"><h3>${escapeHtml(c.name)}</h3><p class="meta">${m.ss.length} sessões • ${fmtMinutes(m.minutes)}</p><div class="course-progress"><span style="width:${m.p}%"></span></div><footer><span>${m.done} concluídas</span><strong>${m.p}%</strong></footer></article>`}).join('');
+}
 function fillCourseOptions(){const opts=state.courses.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');$('#sessionCourse').innerHTML=opts;const current=$('#trackFilter').value;$('#trackFilter').innerHTML='<option value="all">Todos os cursos</option>'+opts;if([...$('#trackFilter').options].some(o=>o.value===current))$('#trackFilter').value=current}
 function bindChecks(){$$('.check').forEach(el=>el.onchange=()=>{const s=state.sessions.find(x=>x.id===el.dataset.sessionId);s.done=el.checked;s.completedAt=el.checked?new Date().toISOString():null;save();toast(el.checked?'Sessão concluída!':'Sessão reaberta')})}
 function calcStreak(){const days=[...new Set(state.sessions.filter(s=>s.done&&s.completedAt).map(s=>s.completedAt.slice(0,10)))].sort().reverse();if(!days.length)return 0;let streak=1;for(let i=1;i<days.length;i++){const a=localDate(days[i-1]),b=localDate(days[i]);if((a-b)/86400000===1)streak++;else break}return streak}
@@ -31,7 +45,7 @@ function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('sh
 $$('.tab').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.view').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(`#${b.dataset.view}View`).classList.add('active')});
 $$('[data-open-modal]').forEach(b=>b.onclick=()=>{$(`#${b.dataset.openModal}Modal`).showModal()});$$('.close-modal').forEach(b=>b.onclick=()=>b.closest('dialog').close());
 $('#sessionForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);state.sessions.push({id:`s${Date.now()}`,date:f.get('date'),courseId:f.get('course'),module:f.get('module'),title:f.get('title'),minutes:Number(f.get('minutes')),done:false,completedAt:null});save();e.target.reset();$('#sessionModal').close();toast('Sessão adicionada')};
-$('#courseForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),name=f.get('name');state.courses.push({id:`c${Date.now()}`,name,color:f.get('color')});save();e.target.reset();$('#courseModal').close();toast('Curso criado')};
+$('#courseForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),name=f.get('name');state.courses.push({id:`c${Date.now()}`,name,color:f.get('color'),platform:'other'});save();e.target.reset();$('#courseModal').close();toast('Curso criado')};
 $('#trackFilter').onchange=renderPlan;$('#statusFilter').onchange=renderPlan;$('#themeBtn').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save()};
 $('#exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`plano-estudos-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)};
 $('#importInput').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!data.courses||!data.sessions)throw 0;state=data;save();toast('Backup restaurado')}catch{toast('Arquivo de backup inválido')}};
