@@ -6,15 +6,16 @@
   <meta name="theme-color" content="#244c66">
   <meta name="description" content="Horizonte: seu aprendizado, no seu ritmo.">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css?v=7">
   <title>Horizonte — Plano de Estudos</title>
 </head>
 <body>
   <header class="topbar">
-    <div>
-      <p class="eyebrow">Seu aprendizado, no seu ritmo</p>
-      <h1>Horizonte</h1>
+    <div class="brand-lockup">
+      <img class="app-logo" src="icon-192.png" alt="">
+      <div><p class="eyebrow">Seu aprendizado, no seu ritmo</p><h1>Horizonte</h1></div>
     </div>
     <div class="header-actions">
       <button id="installBtn" class="button ghost" hidden>Instalar app</button>
@@ -37,6 +38,13 @@
         <strong id="progressPercent">0%</strong>
         <span>concluído</span>
       </div>
+    </section>
+
+    <section class="today-overview" aria-label="Resumo de hoje">
+      <article><span>Hoje</span><strong id="todayPlan">Descanso</strong><small id="todayDetail">Nenhuma sessão planejada</small></article>
+      <article><span>Tempo necessário</span><strong id="todayMinutes">0min</strong><small>somente sessões pendentes</small></article>
+      <article><span>Se começar agora</span><strong id="finishTime">—</strong><small id="finishDetail">horário estimado de término</small></article>
+      <article class="focus-card"><span>Foco principal</span><strong id="todayFocus">FIAP</strong><small>A pós-graduação vem primeiro</small></article>
     </section>
 
     <section class="stats" aria-label="Resumo">
@@ -141,6 +149,6 @@
   </dialog>
 
   <div id="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
