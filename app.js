@@ -7,41 +7,106 @@ const initialCourses=[
   {id:'powerbi',name:'Trilha de Power BI',color:'#f6a623',platform:'etek',order:3,status:'planned'},
   {id:'automacao',name:'Trilha de Automação',color:'#3caea3',platform:'etek',order:4,status:'planned'}
 ];
+const pythonStudyDates=['2026-07-13','2026-07-14','2026-07-15','2026-07-16','2026-07-17','2026-07-21','2026-07-23','2026-07-28','2026-07-30','2026-08-04','2026-08-06','2026-08-11','2026-08-13','2026-08-18','2026-08-20','2026-08-25','2026-08-27','2026-09-01','2026-09-03','2026-09-08','2026-09-10'];
+const pythonCurriculum=[
+['Boas-vindas e Introdução à Formação em Python','Introdução a Formação em Python','01:32'],
+['Boas-vindas e Introdução à Formação em Python','Porque aprender Python se sei Power BI?','06:35'],
+['Boas-vindas e Introdução à Formação em Python','Aplicações de Python para analista de dados e negócios','06:03'],
+['Fundamentos','Seu Professor e Introdução ao Módulo','02:37'],
+['Fundamentos','Instalando o Python','03:40'],
+['Fundamentos','IDE de desenvolvimento nativo do Python (IDLE)','04:38'],
+['Fundamentos','Instalando o VSCode','04:48'],
+['Fundamentos','Configuração do VSCode (Extensões)','04:54'],
+['Fundamentos','Configuração do VSCode (Terminal, scripts e pastas)','06:00'],
+['Fundamentos','Configuração do VSCode (Tecla de Atalho)','03:49'],
+['Fundamentos','IDEs de desenvolvimento - VSCode','06:06'],
+['Fundamentos','IDEs de desenvolvimento - VSCode com Jupyter','07:55'],
+['Fundamentos','IDEs de desenvolvimento - Google Colab','03:46'],
+['Fundamentos','Comentários e Docstring','08:25'],
+['Fundamentos','Como apagar os resultados do terminal - Método 1','07:16'],
+['Fundamentos','Como apagar os resultados do terminal - Método 2','04:58'],
+['Fundamentos','Boas práticas no Python - Parte 1','07:34'],
+['Fundamentos','Boas práticas no Python - Parte 2','05:39'],
+['Fundamentos','Resumo - Boas práticas no Python','atividade'],
+['Fundamentos','Instrução Print - Parte 1','08:37'],
+['Fundamentos','Instrução Print - Parte 2','12:41'],
+['Fundamentos','Variáveis - Como utilizá-las em seus scripts - Parte 1','08:33'],
+['Fundamentos','Variáveis - Como utilizá-las em seus scripts - Parte 2','05:46'],
+['Fundamentos','Operadores Matemáticos - Parte 1','09:43'],
+['Fundamentos','Operadores Matemáticos - Parte 2','06:06'],
+['Fundamentos','Operadores Incrementais','05:03'],
+['Fundamentos','Métodos nativos para Strings - Parte 1','15:28'],
+['Fundamentos','Métodos nativos para Strings - Parte 2','09:18'],
+['Fundamentos','Métodos nativos para Strings - Parte 3','07:38'],
+['Fundamentos','Função INPUT e método FORMAT para strings','12:49'],
+['Fundamentos','Operadores Relacionais','07:53'],
+['Fundamentos','Operadores de associação','09:04'],
+['Fundamentos','Operadores Lógicos','07:22'],
+['Fundamentos','Variáveis e seu escopo de aplicação','08:03'],
+['Fundamentos','Função range','06:16'],
+['Fundamentos','Listas - Parte 1','07:42'],
+['Fundamentos','Listas - Parte 2','10:45'],
+['Fundamentos','Tuplas','05:43'],
+['Fundamentos','Dicionários','07:03'],
+['Fundamentos','Estrutura de Decisão IF','09:16'],
+['Fundamentos','Estrutura de Repetição FOR','11:29'],
+['Fundamentos','Estrutura de Repetição WHILE','12:25'],
+['Fundamentos','Tratamento de Erros nos Scripts','12:08'],
+['Fundamentos','Aprenda com IA - ChatGPT','06:01'],
+['Fundamentos','Aprenda com IA - Copilot','06:06'],
+['Fundamentos','GitHub Copilot - IA para gerar códigos','15:09'],
+['Fundamentos','Finalização do módulo','00:42'],
+['Análise de Dados','Apresentação do Módulo','01:14'],
+['Análise de Dados','Biblioteca math - Aula 1','13:12'],
+['Análise de Dados','Biblioteca math - Aula 2','11:36'],
+['Análise de Dados','Biblioteca random - Aula 1','11:53'],
+['Análise de Dados','Biblioteca random - Aula 2','11:30'],
+['Análise de Dados','Biblioteca time','16:13'],
+['Análise de Dados','Biblioteca datetime - Aula 1','12:29'],
+['Análise de Dados','Biblioteca datetime - Aula 2','12:30'],
+['Análise de Dados','Biblioteca os - Aula 1','12:31'],
+['Análise de Dados','Biblioteca os - Aula 2','09:31'],
+['Análise de Dados','Biblioteca faker - Aula 1','12:00'],
+['Análise de Dados','Biblioteca faker - Aula 2 - Parte 1','13:38'],
+['Análise de Dados','Biblioteca faker - Aula 2 - Parte 2','08:54'],
+['Análise de Dados','Biblioteca faker - Aula 3','14:32'],
+['Análise de Dados','O uso dos dados gerados no Power BI','04:11'],
+['Análise de Dados','Biblioteca num2words - Aula 1','12:45'],
+['Análise de Dados','Biblioteca num2words - Aula 2','05:26'],
+['Análise de Dados','Biblioteca numpy - Aula 1','10:51'],
+['Análise de Dados','Biblioteca numpy - Aula 2','13:56'],
+['Análise de Dados','Biblioteca numpy - Aula 3','16:38'],
+['Análise de Dados','Biblioteca pandas - Aula 1 - Parte 1','09:15'],
+['Análise de Dados','Biblioteca pandas - Aula 1 - Parte 2','07:49'],
+['Análise de Dados','Biblioteca pandas - Aula 2','14:55'],
+['Análise de Dados','Biblioteca pandas - Aula 3','11:18'],
+['Análise de Dados','Biblioteca pandas - Aula 4','13:21'],
+['Análise de Dados','Biblioteca pandas - Aula 5','06:03'],
+['Análise de Dados','Biblioteca pandas - Aula 6','06:35'],
+['Análise de Dados','Biblioteca pandas - Aula 7','08:11'],
+['Análise de Dados','Biblioteca pandas - Aula 8','12:33'],
+['Análise de Dados','Biblioteca pandas - Aula 9','10:31'],
+['Análise de Dados','Biblioteca pandas - Aula 10','15:44'],
+['Análise de Dados','Biblioteca pandas - Aula 11','20:01'],
+['Análise de Dados','Biblioteca matplotlib - Aula 1','10:41'],
+['Análise de Dados','Biblioteca matplotlib - Aula 2','04:32'],
+['Análise de Dados','Finalização do curso','01:44'],
+['Queremos te ouvir!','Compartilhe sua experiência.','atividade']
+].map(([module,title,duration],index)=>({number:index+1,module,title,duration,seconds:duration==='atividade'?0:duration.split(':').reduce((m,s)=>m*60+Number(s),0)}));
+function buildPythonPlan(){let index=0;const result=[];pythonStudyDates.forEach((date,dateIndex)=>{let lessons=[];const datesLeft=pythonStudyDates.length-dateIndex;if(dateIndex===0){lessons=pythonCurriculum.slice(0,8);index=8}else if(datesLeft===1){lessons=pythonCurriculum.slice(index);index=pythonCurriculum.length}else{const remaining=pythonCurriculum.slice(index),remainingSeconds=remaining.reduce((sum,l)=>sum+l.seconds,0),target=remainingSeconds/datesLeft;let seconds=0;while(index<pythonCurriculum.length&&(pythonCurriculum.length-index)>datesLeft-1){const next=pythonCurriculum[index];if(lessons.length&&seconds>=target*.9)break;if(lessons.length&&next.module!==lessons[0].module&&seconds>=target*.65)break;lessons.push(next);seconds+=next.seconds;index++}if(!lessons.length&&index<pythonCurriculum.length)lessons.push(pythonCurriculum[index++])}const seconds=lessons.reduce((sum,l)=>sum+l.seconds,0),modules=[...new Set(lessons.map(l=>l.module))],start=lessons[0]?.number||0,end=lessons.at(-1)?.number||start;result.push({id:`py-${date}`,date,courseId:'python',module:modules.join(' + '),title:`Aulas ${start}${end>start?` a ${end}`:''} — ${modules.join(' + ')}`,minutes:Math.max(1,Math.ceil(seconds/60)),lessons,source:'etek-python-v12',done:false,completedAt:null})});return result}
+const pythonPlanSessions=buildPythonPlan();
+const legacyPythonTitles=new Set(['Instalação do Python, VS Code e primeiros códigos','Print, variáveis e operadores','Strings, input e formatação','Listas, tuplas e dicionários','If, for e while','Exercício de revisão dos fundamentos','Operadores relacionais, lógicos e de associação','Escopo de variáveis e range','Listas — exercícios práticos','Tuplas e dicionários — prática','Estruturas de decisão if','Laços for e while','Tratamento de erros','Math, random e time','Datetime e os','Faker e num2words','NumPy — aulas 1 e 2','NumPy 3 e introdução ao Pandas','Pandas — aulas 1 a 4','Pandas — aulas 5 a 8','Pandas — aulas 9 a 11','Matplotlib e finalização do curso']);
 const rows=[
-['2026-07-13','python','Preparação','Instalação do Python, VS Code e primeiros códigos',60],['2026-07-14','python','Fundamentos','Print, variáveis e operadores',60],['2026-07-15','python','Fundamentos','Strings, input e formatação',60],['2026-07-16','python','Estruturas','Listas, tuplas e dicionários',60],['2026-07-17','python','Lógica','If, for e while',60],['2026-07-18','python','Prática','Exercício de revisão dos fundamentos',60],
-['2026-07-20','fiap','Big Data','Aula 1 — Definição e os 5 Vs do Big Data',90],['2026-07-21','python','Fundamentos','Operadores relacionais, lógicos e de associação',60],['2026-07-22','fiap','Big Data','Aula 2 — Hadoop e Spark',90],['2026-07-23','python','Fundamentos','Escopo de variáveis e range',60],['2026-07-25','challenge','Revisão','Revisar Big Data e praticar estruturas',120],['2026-07-27','fiap','Big Data','Aula 3 — Armazenamento de dados na nuvem',90],['2026-07-28','python','Estruturas','Listas — exercícios práticos',60],['2026-07-29','fiap','Big Data','Aula 4 — Manipulação de dados com Spark',90],['2026-07-30','python','Estruturas','Tuplas e dicionários — prática',60],['2026-08-01','challenge','Planejamento','Registrar ideias e dúvidas do projeto',120],
-['2026-08-03','fiap','Bancos de Dados','Aula 1 — Bancos relacionais',90],['2026-08-04','python','Lógica','Estruturas de decisão if',60],['2026-08-05','fiap','Bancos de Dados','Aula 2 — Modelo Entidade-Relacionamento',90],['2026-08-06','python','Lógica','Laços for e while',60],['2026-08-08','challenge','Pesquisa','Relacionar o conteúdo ao desafio',120],['2026-08-10','fiap','Bancos de Dados','Aula 3 — DW, Data Lake, Lakehouse, Mesh e Fabric',90],['2026-08-11','python','Qualidade','Tratamento de erros',60],['2026-08-12','fiap','Bancos de Dados','Aula 4 — SQL, filtros, agrupamentos e joins',90],['2026-08-13','python','Bibliotecas','Math, random e time',60],['2026-08-15','challenge','Escopo','Definir tema, dados e entregáveis',120],['2026-08-17','fiap','Bancos de Dados','Aula 5 — Bancos NoSQL',90],['2026-08-18','python','Bibliotecas','Datetime e os',60],['2026-08-19','fiap','Storage','Aula 1 — Data Warehouse',90],['2026-08-20','python','Dados sintéticos','Faker e num2words',60],['2026-08-22','challenge','Arquitetura','Desenhar a solução e dividir tarefas',120],
-['2026-08-24','fiap','Storage','Aula 2 — Data Lake',90],['2026-08-25','python','NumPy','NumPy — aulas 1 e 2',60],['2026-08-26','fiap','Storage','Aula 3 — Data Lakehouse',90],['2026-08-27','python','NumPy e Pandas','NumPy 3 e introdução ao Pandas',60],['2026-08-29','challenge','Implementação','Começar scripts e documentação',120],['2026-08-31','fiap','Revisão','Revisar Big Data e bancos de dados',90],['2026-09-01','python','Pandas','Pandas — aulas 1 a 4',60],['2026-09-02','fiap','Revisão','Revisar storage, Spark e Databricks',90],['2026-09-03','python','Pandas','Pandas — aulas 5 a 8',60],['2026-09-05','challenge','Implementação','Desenvolver e testar a solução',120],['2026-09-07','fiap','Revisão final','Consolidar conceitos e pendências',90],['2026-09-08','python','Pandas','Pandas — aulas 9 a 11',60],['2026-09-09','challenge','Finalização','Fechar documentação e apresentação',90],['2026-09-10','python','Visualização','Matplotlib e finalização do curso',60],['2026-09-12','challenge','Revisão final','Revisar e deixar pronto para envio',120],['2026-09-14','challenge','Entrega','Conferência final e envio — prazo oficial 15/09',30]
+['2026-07-20','fiap','Big Data','Aula 1 — Definição e os 5 Vs do Big Data',90],['2026-07-22','fiap','Big Data','Aula 2 — Hadoop e Spark',90],['2026-07-24','challenge','Revisão','Revisar Big Data e praticar estruturas',120],['2026-07-27','fiap','Big Data','Aula 3 — Armazenamento de dados na nuvem',90],['2026-07-29','fiap','Big Data','Aula 4 — Manipulação de dados com Spark',90],['2026-07-31','challenge','Planejamento','Registrar ideias e dúvidas do projeto',120],
+['2026-08-03','fiap','Bancos de Dados','Aula 1 — Bancos relacionais',90],['2026-08-05','fiap','Bancos de Dados','Aula 2 — Modelo Entidade-Relacionamento',90],['2026-08-07','challenge','Pesquisa','Relacionar o conteúdo ao desafio',120],['2026-08-10','fiap','Bancos de Dados','Aula 3 — DW, Data Lake, Lakehouse, Mesh e Fabric',90],['2026-08-12','fiap','Bancos de Dados','Aula 4 — SQL, filtros, agrupamentos e joins',90],['2026-08-14','challenge','Escopo','Definir tema, dados e entregáveis',120],['2026-08-17','fiap','Bancos de Dados','Aula 5 — Bancos NoSQL',90],['2026-08-19','fiap','Storage','Aula 1 — Data Warehouse',90],['2026-08-21','challenge','Arquitetura','Desenhar a solução e dividir tarefas',120],
+['2026-08-24','fiap','Storage','Aula 2 — Data Lake',90],['2026-08-26','fiap','Storage','Aula 3 — Data Lakehouse',90],['2026-08-28','challenge','Implementação','Começar scripts e documentação',120],['2026-08-31','fiap','Revisão','Revisar Big Data e bancos de dados',90],['2026-09-02','fiap','Revisão','Revisar storage, Spark e Databricks',90],['2026-09-04','challenge','Implementação','Desenvolver e testar a solução',120],['2026-09-07','fiap','Revisão final','Consolidar conceitos e pendências',90],['2026-09-09','challenge','Finalização','Fechar documentação e apresentação',90],['2026-09-11','challenge','Revisão final','Revisar e deixar pronto para envio',120],['2026-09-14','challenge','Entrega','Conferência final e envio — prazo oficial 15/09',30]
 ];
-const initialState={courses:initialCourses,sessions:rows.map((r,i)=>({id:`s${i+1}`,date:r[0],courseId:r[1],module:r[2],title:r[3],minutes:r[4],done:false,completedAt:null})),theme:'light'};
-const pythonLessonMap={
-  'Instalação do Python, VS Code e primeiros códigos':['Instalar o Python','Configurar o VS Code','Rodar os primeiros códigos'],
-  'Print, variáveis e operadores':['Print','Variáveis','Operadores'],
-  'Strings, input e formatação':['Strings','Input de dados','Formatação de textos'],
-  'Listas, tuplas e dicionários':['Listas','Tuplas','Dicionários'],
-  'If, for e while':['Condições com if','Repetições com for','Repetições com while'],
-  'Exercício de revisão dos fundamentos':['Revisão dos fundamentos','Exercícios práticos'],
-  'Operadores relacionais, lógicos e de associação':['Operadores relacionais','Operadores lógicos','Operadores de associação'],
-  'Escopo de variáveis e range':['Escopo de variáveis','Função range'],
-  'Listas — exercícios práticos':['Exercícios de listas','Desafio prático de listas'],
-  'Tuplas e dicionários — prática':['Prática com tuplas','Prática com dicionários'],
-  'Estruturas de decisão if':['If e else','Elif e condições combinadas'],
-  'Laços for e while':['Laço for','Laço while'],
-  'Tratamento de erros':['Try e except','Tratamento de exceções'],
-  'Math, random e time':['Biblioteca math','Biblioteca random','Biblioteca time'],
-  'Datetime e os':['Biblioteca datetime','Biblioteca os'],
-  'Faker e num2words':['Faker','Num2words'],
-  'NumPy — aulas 1 e 2':['NumPy — aula 1','NumPy — aula 2'],
-  'NumPy 3 e introdução ao Pandas':['NumPy — aula 3','Introdução ao Pandas'],
-  'Pandas — aulas 1 a 4':['Pandas — aula 1','Pandas — aula 2','Pandas — aula 3','Pandas — aula 4'],
-  'Pandas — aulas 5 a 8':['Pandas — aula 5','Pandas — aula 6','Pandas — aula 7','Pandas — aula 8'],
-  'Pandas — aulas 9 a 11':['Pandas — aula 9','Pandas — aula 10','Pandas — aula 11'],
-  'Matplotlib e finalização do curso':['Matplotlib','Finalização do curso']
-};
+const initialState={courses:initialCourses,sessions:[...pythonPlanSessions,...rows.map((r,i)=>({id:`s${i+1}`,date:r[0],courseId:r[1],module:r[2],title:r[3],minutes:r[4],done:false,completedAt:null}))],theme:'light'};
 let state=loadState();let installPrompt=null;
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
 function loadState(){try{return migrateState(JSON.parse(localStorage.getItem(STORAGE_KEY))||structuredClone(initialState))}catch{return migrateState(structuredClone(initialState))}}
-function migrateState(saved){saved.courses=saved.courses||[];initialCourses.forEach(base=>{const found=saved.courses.find(c=>c.id===base.id);if(found)Object.assign(found,base);else saved.courses.push({...base})});saved.sessions=saved.sessions||[];saved.theme=saved.theme||'light';moveWeekends(saved.sessions);return saved}
+function syncPythonPlan(saved){const current=saved.sessions.filter(s=>s.courseId==='python'),generated=current.filter(s=>s.source==='etek-python-v12'),legacy=current.filter(s=>legacyPythonTitles.has(s.title)),custom=current.filter(s=>s.source!=='etek-python-v12'&&!legacyPythonTitles.has(s.title)),previous=[...generated,...legacy],planned=pythonPlanSessions.map(plan=>{const old=previous.find(s=>s.id===plan.id)||previous.find(s=>s.date===plan.date);return{...structuredClone(plan),done:!!old?.done,completedAt:old?.completedAt||null,...(old?.actualMinutes?{actualMinutes:old.actualMinutes}:{}),...(old?.note?{note:old.note}:{})}});saved.sessions=[...saved.sessions.filter(s=>s.courseId!=='python'),...custom,...planned]}
+function migrateState(saved){saved.courses=saved.courses||[];initialCourses.forEach(base=>{const found=saved.courses.find(c=>c.id===base.id);if(found)Object.assign(found,base);else saved.courses.push({...base})});saved.sessions=saved.sessions||[];saved.theme=saved.theme||'light';syncPythonPlan(saved);moveWeekends(saved.sessions);return saved}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));render()}
 function course(id){return state.courses.find(c=>c.id===id)||{name:'Outro',color:'#7c5ce5'}}
 function fmtMinutes(m){const h=Math.floor(m/60),min=m%60;return h?`${h}h${min?` ${min}min`:''}`:`${min}min`}
@@ -53,21 +118,22 @@ function priority(s){return course(s.courseId).platform==='fiap'?0:1}
 function byPriority(a,b){return a.date.localeCompare(b.date)||priority(a)-priority(b)||a.title.localeCompare(b.title)}
 function parseDuration(value){const text=String(value).trim();if(/^\d+$/.test(text))return Number(text);if(/^\d{1,3}:\d{2}$/.test(text)){const [m,s]=text.split(':').map(Number);if(s<60)return Math.max(1,Math.ceil((m*60+s)/60))}return 0}
 function dateParts(s){const d=localDate(s);return{day:d.getDate(),month:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''),full:d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})}}
-function sessionLessons(s){return s.courseId==='python'?(pythonLessonMap[s.title]||[s.title]):[]}
-function lessonList(s){const lessons=sessionLessons(s);return lessons.length?`<div class="lesson-list">${lessons.map((lesson,i)=>`<div class="lesson-item"><b>Aula ${i+1}</b> · ${escapeHtml(lesson)}</div>`).join('')}</div>`:''}
-function sessionCard(s){const c=course(s.courseId),d=dateParts(s.date),fiap=c.platform==='fiap',lessons=sessionLessons(s);return `<article class="session-card ${s.done?'done':''} ${fiap?'fiap-priority':''}" style="--course-color:${c.color}"><div class="date-box"><strong>${d.day}</strong><span>${d.month}</span></div><div><h3>${escapeHtml(s.title)} ${fiap?'<span class="priority-tag">PRIORIDADE</span>':''}</h3><div class="meta"><span class="pill">${escapeHtml(c.name)}</span><span>${escapeHtml(s.module)}</span><span>${lessons.length?`${lessons.length} ${lessons.length===1?'aula':'aulas'} • `:''}${fmtMinutes(s.minutes)}</span>${s.actualMinutes?`<span>Realizado: ${fmtMinutes(s.actualMinutes)}</span>`:''}</div>${lessonList(s)}</div><input class="check" type="checkbox" aria-label="Marcar ${escapeHtml(s.title)} como concluído" data-session-id="${s.id}" ${s.done?'checked':''}></article>`}
+function sessionLessonItems(s){if(Array.isArray(s.lessons))return s.lessons.map((lesson,i)=>typeof lesson==='string'?{number:i+1,title:lesson,duration:''}:lesson);return s.courseId==='python'?[{number:1,title:s.title,duration:''}]:[]}
+function sessionLessons(s){return sessionLessonItems(s).map(lesson=>lesson.title)}
+function lessonList(s){const lessons=sessionLessonItems(s);return lessons.length?`<div class="lesson-list">${lessons.map(lesson=>`<div class="lesson-item"><b>Conteúdo ${lesson.number}</b><span class="lesson-name">${escapeHtml(lesson.title)}</span><span class="lesson-duration">${escapeHtml(lesson.duration||'')}</span></div>`).join('')}</div>`:''}
+function sessionCard(s){const c=course(s.courseId),d=dateParts(s.date),fiap=c.platform==='fiap',lessons=sessionLessonItems(s);return `<article class="session-card ${s.done?'done':''} ${fiap?'fiap-priority':''}" style="--course-color:${c.color}"><div class="date-box"><strong>${d.day}</strong><span>${d.month}</span></div><div><h3>${escapeHtml(s.title)} ${fiap?'<span class="priority-tag">PRIORIDADE</span>':''}</h3><div class="meta"><span class="pill">${escapeHtml(c.name)}</span><span>${escapeHtml(s.module)}</span><span>${lessons.length?`${lessons.length} ${lessons.length===1?'conteúdo':'conteúdos'} • `:''}${fmtMinutes(s.minutes)}</span>${s.actualMinutes?`<span>Realizado: ${fmtMinutes(s.actualMinutes)}</span>`:''}</div>${lessonList(s)}</div><input class="check" type="checkbox" aria-label="Marcar ${escapeHtml(s.title)} como concluído" data-session-id="${s.id}" ${s.done?'checked':''}></article>`}
 function escapeHtml(v){const d=document.createElement('div');d.textContent=v;return d.innerHTML}
 function render(){document.documentElement.classList.toggle('dark',state.theme==='dark');$('#themeBtn').textContent=state.theme==='dark'?'☀':'☾';const total=state.sessions.reduce((a,s)=>a+s.minutes,0),done=state.sessions.filter(s=>s.done).reduce((a,s)=>a+s.minutes,0),pct=total?Math.round(done/total*100):0;$('#totalHours').textContent=fmtMinutes(total);$('#doneHours').textContent=fmtMinutes(done);$('#remainingCount').textContent=state.sessions.filter(s=>!s.done).length;$('#progressPercent').textContent=`${pct}%`;$('#progressRing').style.strokeDashoffset=308-(308*pct/100);$('#streak').textContent=`${calcStreak()} dias úteis`;const now=new Date();$('#todayLabel').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});$('#weekendNotice').hidden=![0,6].includes(now.getDay());const next=state.sessions.filter(s=>!s.done).sort(byPriority).slice(0,5);$('#heroTitle').textContent=next[0]?`Próximo: ${next[0].title}`:'Plano concluído!';$('#heroSubtitle').textContent=next[0]?`${dateParts(next[0].date).full} • ${fmtMinutes(next[0].minutes)}`:'Você concluiu todas as sessões.';$('#nextSessions').innerHTML=next.length?next.map(sessionCard).join(''):'<div class="empty">Nenhuma sessão pendente. Que conquista!</div>';renderTodayOverview(now);renderPlan();renderCourses();fillCourseOptions();fillStudyOptions();bindChecks()}
-function renderTodayOverview(now){const today=isoDate(now),sessions=state.sessions.filter(s=>!s.done&&s.date===today).sort(byPriority),minutes=sessions.reduce((a,s)=>a+s.minutes,0),activities=sessions.reduce((n,s)=>n+(sessionLessons(s).length||1),0),weekend=[0,6].includes(now.getDay());$('#todayPlan').textContent=weekend?'Descanso':activities?`${activities} ${activities===1?'aula':'aulas'}`:'Agenda livre';$('#todayDetail').textContent=weekend?'Sábado e domingo são seus':sessions.length?sessions.map(s=>course(s.courseId).name).filter((v,i,a)=>a.indexOf(v)===i).join(' + '):'Nenhum estudo pendente para hoje';$('#todayMinutes').textContent=fmtMinutes(minutes);if(minutes){const finish=new Date(now.getTime()+minutes*60000);$('#finishTime').textContent=finish.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});$('#finishDetail').textContent=`considerando início às ${now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`}else{$('#finishTime').textContent='—';$('#finishDetail').textContent=weekend?'Aproveite seu descanso':'Sem estudos pendentes'}const fiap=sessions.find(s=>course(s.courseId).platform==='fiap');$('#todayFocus').textContent=fiap?'FIAP':sessions.length?course(sessions[0].courseId).name:'FIAP'}
+function renderTodayOverview(now){const today=isoDate(now),sessions=state.sessions.filter(s=>!s.done&&s.date===today).sort(byPriority),minutes=sessions.reduce((a,s)=>a+s.minutes,0),activities=sessions.reduce((n,s)=>n+(sessionLessonItems(s).length||1),0),weekend=[0,6].includes(now.getDay());$('#todayPlan').textContent=weekend?'Descanso':activities?`${activities} ${activities===1?'conteúdo':'conteúdos'}`:'Agenda livre';$('#todayDetail').textContent=weekend?'Sábado e domingo são seus':sessions.length?sessions.map(s=>course(s.courseId).name).filter((v,i,a)=>a.indexOf(v)===i).join(' + '):'Nenhum estudo pendente para hoje';$('#todayMinutes').textContent=fmtMinutes(minutes);if(minutes){const finish=new Date(now.getTime()+minutes*60000);$('#finishTime').textContent=finish.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});$('#finishDetail').textContent=`considerando início às ${now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`}else{$('#finishTime').textContent='—';$('#finishDetail').textContent=weekend?'Aproveite seu descanso':'Sem estudos pendentes'}const fiap=sessions.find(s=>course(s.courseId).platform==='fiap');$('#todayFocus').textContent=fiap?'FIAP':sessions.length?course(sessions[0].courseId).name:'FIAP'}
 function renderPlan(){const track=$('#trackFilter').value||'all',status=$('#statusFilter').value||'all';const list=state.sessions.filter(s=>(track==='all'||s.courseId===track)&&(status==='all'||(status==='done'&&s.done)||(status==='pending'&&!s.done))).sort(byPriority);let month='';$('#allSessions').innerHTML=list.map(s=>{const m=localDate(s.date).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});const head=m!==month?`<div class="timeline-month">${month=m}</div>`:'';return head+sessionCard(s)}).join('')||'<div class="empty">Nenhuma sessão encontrada.</div>';bindChecks()}
-function courseMetrics(c){const ss=state.sessions.filter(s=>s.courseId===c.id),done=ss.filter(s=>s.done).length,p=ss.length?Math.round(done/ss.length*100):0;return{ss,done,p,minutes:ss.reduce((a,s)=>a+s.minutes,0)}}
+function courseMetrics(c){const ss=state.sessions.filter(s=>s.courseId===c.id),done=ss.filter(s=>s.done).length,lessonCount=ss.reduce((n,s)=>n+sessionLessonItems(s).length,0),doneLessons=ss.filter(s=>s.done).reduce((n,s)=>n+sessionLessonItems(s).length,0),p=lessonCount?Math.round(doneLessons/lessonCount*100):ss.length?Math.round(done/ss.length*100):0;return{ss,done,p,lessonCount,doneLessons,minutes:ss.reduce((a,s)=>a+s.minutes,0)}}
 function compactCourse(c){const m=courseMetrics(c);return `<article class="mini-course" style="--course-color:${c.color}"><div><span class="mini-dot"></span><h4>${escapeHtml(c.name)}</h4><p>${m.ss.length} sessões • ${fmtMinutes(m.minutes)}</p></div><strong>${m.p}%</strong><div class="mini-progress"><span style="width:${m.p}%"></span></div></article>`}
-function pythonGuide(){const upcoming=state.sessions.filter(s=>s.courseId==='python'&&!s.done).sort(byPriority).slice(0,4);if(!upcoming.length)return '<div class="python-guide complete-guide"><strong>Python concluído!</strong><span>Você terminou todas as aulas planejadas.</span></div>';return `<div class="python-guide"><div class="guide-title"><strong>Suas próximas aulas</strong><span>Faça na ordem abaixo</span></div>${upcoming.map(s=>{const d=dateParts(s.date),lessons=sessionLessons(s);return `<div class="python-day"><div class="python-day-date"><strong>${d.full}</strong><span>${lessons.length} ${lessons.length===1?'aula':'aulas'} • ${fmtMinutes(s.minutes)}</span></div><div class="python-lessons">${lessons.map((lesson,i)=>`<div class="python-lesson"><b>${i+1}</b><span>${escapeHtml(lesson)}</span></div>`).join('')}</div></div>`}).join('')}<div class="weekend-free">☕ Sábado e domingo livres</div></div>`}
+function pythonGuide(){const upcoming=state.sessions.filter(s=>s.courseId==='python'&&!s.done).sort(byPriority).slice(0,4);if(!upcoming.length)return '<div class="python-guide complete-guide"><strong>Python concluído!</strong><span>Você terminou todos os conteúdos planejados.</span></div>';return `<div class="python-guide"><div class="guide-title"><strong>Seus próximos conteúdos</strong><span>Grade oficial da ETEK</span></div>${upcoming.map(s=>{const d=dateParts(s.date),lessons=sessionLessonItems(s);return `<div class="python-day"><div class="python-day-date"><strong>${d.full}</strong><span>${lessons.length} ${lessons.length===1?'conteúdo':'conteúdos'} • ${fmtMinutes(s.minutes)}</span></div><div class="python-lessons">${lessons.map(lesson=>`<div class="python-lesson"><b>${lesson.number}</b><span>${escapeHtml(lesson.title)}</span><small>${escapeHtml(lesson.duration||'')}</small></div>`).join('')}</div></div>`}).join('')}<div class="weekend-free">☕ Python às terças e quintas • FIAP tem prioridade • fins de semana livres</div></div>`}
 function renderCourses(){
   const fiap=state.courses.filter(c=>c.platform==='fiap').sort((a,b)=>a.order-b.order);
   $('#fiapCourses').innerHTML=fiap.map(compactCourse).join('');
   const etek=state.courses.filter(c=>c.platform==='etek').sort((a,b)=>a.order-b.order);
-  $('#etekRoadmap').innerHTML=etek.map((c,i)=>{const m=courseMetrics(c),active=c.status==='current',complete=m.p===100&&m.ss.length>0;return `<article class="roadmap-step ${active?'active':''} ${complete?'complete':''}" style="--course-color:${c.color}"><div class="step-number">${complete?'✓':i+1}</div><div class="step-copy"><span>${active?'EM ANDAMENTO':complete?'CONCLUÍDA':'PRÓXIMA ETAPA'}</span><h4>${escapeHtml(c.name)}</h4><p>${m.ss.length?`${m.ss.length} sessões planejadas • ${m.p}% concluído`:'Será planejada quando você iniciar esta trilha.'}</p>${m.ss.length?`<div class="mini-progress"><span style="width:${m.p}%"></span></div>`:''}${c.id==='python'&&active?pythonGuide():''}</div></article>`}).join('');
+  $('#etekRoadmap').innerHTML=etek.map((c,i)=>{const m=courseMetrics(c),active=c.status==='current',complete=m.p===100&&m.ss.length>0;return `<article class="roadmap-step ${active?'active':''} ${complete?'complete':''}" style="--course-color:${c.color}"><div class="step-number">${complete?'✓':i+1}</div><div class="step-copy"><span>${active?'EM ANDAMENTO':complete?'CONCLUÍDA':'PRÓXIMA ETAPA'}</span><h4>${escapeHtml(c.name)}</h4><p>${m.ss.length?`${c.id==='python'?`${m.lessonCount} conteúdos oficiais`:`${m.ss.length} sessões planejadas`} • ${m.p}% concluído`:'Será planejada quando você iniciar esta trilha.'}</p>${m.ss.length?`<div class="mini-progress"><span style="width:${m.p}%"></span></div>`:''}${c.id==='python'&&active?pythonGuide():''}</div></article>`}).join('');
   const others=state.courses.filter(c=>!c.platform||c.platform==='other');
   $('.other-courses').hidden=!others.length;
   $('#courseGrid').innerHTML=others.map(c=>{const m=courseMetrics(c);return `<article class="course-card" style="--course-color:${c.color}"><h3>${escapeHtml(c.name)}</h3><p class="meta">${m.ss.length} sessões • ${fmtMinutes(m.minutes)}</p><div class="course-progress"><span style="width:${m.p}%"></span></div><footer><span>${m.done} concluídas</span><strong>${m.p}%</strong></footer></article>`}).join('');
