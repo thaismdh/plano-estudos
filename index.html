@@ -7,7 +7,7 @@
   <meta name="description" content="Horizonte: seu aprendizado, no seu ritmo.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css?v=14">
   <title>Horizonte — Plano de Estudos</title>
 </head>
 <body>
@@ -55,6 +55,7 @@
 
     <nav class="tabs" aria-label="Seções do aplicativo">
       <button class="tab active" data-view="today">Hoje</button>
+      <button class="tab" data-view="week">Semana</button>
       <button class="tab" data-view="plan">Cronograma</button>
       <button class="tab" data-view="courses">Jornadas</button>
       <button class="tab" data-view="settings">Dados</button>
@@ -66,14 +67,25 @@
         <div class="quick-actions"><button class="button secondary" data-open-modal="study">✓ Estudei hoje</button><button class="button primary" data-open-modal="session">+ Nova sessão</button></div>
       </div>
       <div id="weekendNotice" class="weekend-notice" hidden><strong>Fim de semana livre 🌅</strong><span>Seu descanso não quebra a sequência. O próximo estudo aparece no dia útil seguinte.</span></div>
+      <div id="replanNotice" class="replan-notice" hidden><strong>Plano reorganizado</strong><span id="replanText"></span></div>
       <div id="nextSessions" class="session-list"></div>
+    </section>
+
+    <section id="weekView" class="view">
+      <div class="section-heading week-heading">
+        <div><p class="eyebrow">Ritmo sustentável</p><h2>Esta semana</h2><p id="weekRange" class="week-range"></p></div>
+        <div class="week-nav" aria-label="Navegar entre semanas"><button id="prevWeek" class="icon-button" aria-label="Semana anterior">←</button><button id="currentWeek" class="button secondary">Semana atual</button><button id="nextWeek" class="icon-button" aria-label="Próxima semana">→</button></div>
+      </div>
+      <div id="weekSummary" class="week-summary" aria-label="Resumo da semana"></div>
+      <div id="weekGrid" class="week-grid"></div>
+      <div class="week-rest"><strong>☕ Sábado e domingo livres</strong><span>O descanso faz parte do seu plano e não quebra sua sequência.</span></div>
     </section>
 
     <section id="planView" class="view">
       <div class="section-heading">
         <div><p class="eyebrow">Visão completa</p><h2>Cronograma</h2></div>
         <div class="filters">
-          <button id="weekdayBtn" class="button secondary">Organizar dias úteis</button>
+          <button id="weekdayBtn" class="button secondary">Replanejar pendências</button>
           <select id="platformFilter" aria-label="Filtrar por plataforma"><option value="all">Todas as plataformas</option><option value="fiap">FIAP</option><option value="etek">ETEK</option></select>
           <select id="trackFilter" aria-label="Filtrar por curso"><option value="all">Todos os cursos</option></select>
           <select id="statusFilter" aria-label="Filtrar por status"><option value="all">Todos os status</option><option value="pending">Pendentes</option><option value="done">Concluídos</option></select>
@@ -149,6 +161,6 @@
   </dialog>
 
   <div id="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>
