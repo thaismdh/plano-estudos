@@ -7,7 +7,7 @@
   <meta name="description" content="Horizonte: seu aprendizado, no seu ritmo.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=14">
+  <link rel="stylesheet" href="styles.css?v=15">
   <title>Horizonte — Plano de Estudos</title>
 </head>
 <body>
@@ -68,6 +68,7 @@
       </div>
       <div id="weekendNotice" class="weekend-notice" hidden><strong>Fim de semana livre 🌅</strong><span>Seu descanso não quebra a sequência. O próximo estudo aparece no dia útil seguinte.</span></div>
       <div id="replanNotice" class="replan-notice" hidden><strong>Plano reorganizado</strong><span id="replanText"></span></div>
+      <section class="deadline-panel" aria-labelledby="deadlineTitle"><header><div><p class="eyebrow">Datas importantes</p><h3 id="deadlineTitle">Próximos prazos</h3></div><button class="button secondary" data-open-modal="deadline">+ Novo prazo</button></header><div id="deadlineList" class="deadline-list"></div></section>
       <div id="nextSessions" class="session-list"></div>
     </section>
 
@@ -160,7 +161,17 @@
     </form>
   </dialog>
 
+  <dialog id="deadlineModal">
+    <form id="deadlineForm" method="dialog">
+      <div class="modal-title"><div><p class="eyebrow">Data importante</p><h2>Novo prazo</h2></div><button type="button" class="icon-button close-modal" aria-label="Fechar">×</button></div>
+      <label>Entrega ou avaliação<input name="title" required placeholder="Ex.: Entrega do Tech Challenge"></label>
+      <div class="form-row"><label>Plataforma<select name="platform"><option value="fiap">FIAP</option><option value="etek">ETEK</option></select></label><label>Data<input name="date" type="date" required></label></div>
+      <label>Observação opcional<input name="note" placeholder="Ex.: Conferir documentação e apresentação"></label>
+      <button class="button primary full" type="submit">Adicionar prazo</button>
+    </form>
+  </dialog>
+
   <div id="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=14"></script>
+  <script src="app.js?v=15"></script>
 </body>
 </html>
