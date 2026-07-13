@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173f5f">
+  <meta name="description" content="Organize cursos, módulos, aulas e sua rotina de estudos.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>Meu Plano de Estudos</title>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Minha jornada</p>
+      <h1>Plano de Estudos</h1>
+    </div>
+    <div class="header-actions">
+      <button id="installBtn" class="button ghost" hidden>Instalar app</button>
+      <button id="themeBtn" class="icon-button" aria-label="Alternar tema">☾</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <span class="today" id="todayLabel"></span>
+        <h2 id="heroTitle">Um passo de cada vez.</h2>
+        <p id="heroSubtitle">Seu plano fica salvo neste dispositivo.</p>
+      </div>
+      <div class="hero-ring" aria-label="Progresso total">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="ring-bg" cx="60" cy="60" r="49"></circle>
+          <circle class="ring-value" id="progressRing" cx="60" cy="60" r="49"></circle>
+        </svg>
+        <strong id="progressPercent">0%</strong>
+        <span>concluído</span>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="Resumo">
+      <article><span>Tempo planejado</span><strong id="totalHours">0h</strong></article>
+      <article><span>Tempo concluído</span><strong id="doneHours">0h</strong></article>
+      <article><span>Sessões restantes</span><strong id="remainingCount">0</strong></article>
+      <article><span>Sequência</span><strong id="streak">0 dias</strong></article>
+    </section>
+
+    <nav class="tabs" aria-label="Seções do aplicativo">
+      <button class="tab active" data-view="today">Hoje</button>
+      <button class="tab" data-view="plan">Cronograma</button>
+      <button class="tab" data-view="courses">Cursos</button>
+      <button class="tab" data-view="settings">Dados</button>
+    </nav>
+
+    <section id="todayView" class="view active">
+      <div class="section-heading">
+        <div><p class="eyebrow">Prioridade</p><h2>Próximos estudos</h2></div>
+        <button class="button primary" data-open-modal="session">+ Nova sessão</button>
+      </div>
+      <div id="nextSessions" class="session-list"></div>
+    </section>
+
+    <section id="planView" class="view">
+      <div class="section-heading">
+        <div><p class="eyebrow">Visão completa</p><h2>Cronograma</h2></div>
+        <div class="filters">
+          <select id="trackFilter" aria-label="Filtrar por curso"><option value="all">Todos os cursos</option></select>
+          <select id="statusFilter" aria-label="Filtrar por status"><option value="all">Todos os status</option><option value="pending">Pendentes</option><option value="done">Concluídos</option></select>
+        </div>
+      </div>
+      <div id="allSessions" class="timeline"></div>
+    </section>
+
+    <section id="coursesView" class="view">
+      <div class="section-heading">
+        <div><p class="eyebrow">Conteúdo</p><h2>Cursos e módulos</h2></div>
+        <button class="button primary" data-open-modal="course">+ Novo curso</button>
+      </div>
+      <div id="courseGrid" class="course-grid"></div>
+    </section>
+
+    <section id="settingsView" class="view">
+      <div class="section-heading"><div><p class="eyebrow">Segurança</p><h2>Seus dados</h2></div></div>
+      <div class="data-grid">
+        <article class="data-card"><h3>Exportar</h3><p>Baixe uma cópia do seu plano e progresso.</p><button id="exportBtn" class="button secondary">Baixar backup</button></article>
+        <article class="data-card"><h3>Importar</h3><p>Restaure um backup salvo anteriormente.</p><label class="button secondary file-button">Escolher arquivo<input id="importInput" type="file" accept="application/json"></label></article>
+        <article class="data-card danger"><h3>Recomeçar</h3><p>Apague alterações e volte ao plano inicial.</p><button id="resetBtn" class="button danger-button">Restaurar plano</button></article>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="sessionModal">
+    <form id="sessionForm" method="dialog">
+      <div class="modal-title"><div><p class="eyebrow">Planejamento</p><h2>Nova sessão</h2></div><button type="button" class="icon-button close-modal" aria-label="Fechar">×</button></div>
+      <label>Curso<select name="course" id="sessionCourse" required></select></label>
+      <label>Módulo<input name="module" required placeholder="Ex.: Fundamentos"></label>
+      <label>Atividade<input name="title" required placeholder="Ex.: Listas e dicionários"></label>
+      <div class="form-row"><label>Data<input name="date" type="date" required></label><label>Duração (min)<input name="minutes" type="number" min="1" value="60" required></label></div>
+      <button class="button primary full" type="submit">Adicionar ao plano</button>
+    </form>
+  </dialog>
+
+  <dialog id="courseModal">
+    <form id="courseForm" method="dialog">
+      <div class="modal-title"><div><p class="eyebrow">Conteúdo</p><h2>Novo curso</h2></div><button type="button" class="icon-button close-modal" aria-label="Fechar">×</button></div>
+      <label>Nome do curso<input name="name" required placeholder="Ex.: SQL"></label>
+      <label>Cor<select name="color"><option value="#20639b">Azul</option><option value="#3caea3">Verde</option><option value="#f6a623">Laranja</option><option value="#7c5ce5">Roxo</option><option value="#ef6f6c">Coral</option></select></label>
+      <button class="button primary full" type="submit">Criar curso</button>
+    </form>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
