@@ -12,3 +12,5 @@ body{background:radial-gradient(circle at 88% 0,rgba(244,162,97,.12),transparent
 @media(max-width:760px){.quick-actions{width:100%}.quick-actions .button{flex:1}.weekend-notice{align-items:flex-start;flex-direction:column}.filters{flex-wrap:wrap}.filters .button{width:100%}}
 @media(max-width:760px){.today-overview{grid-template-columns:1fr 1fr}.app-logo{width:44px;height:44px}.brand-lockup{gap:9px}}
 @media(max-width:420px){.today-overview{grid-template-columns:1fr}.today-overview article{padding:15px 16px}}
+#studyModal{max-height:calc(100dvh - 24px);overflow:hidden}#studyModal form{padding:20px 22px;gap:10px}#studyModal .modal-title h2{font-size:24px}#studyModal form label{gap:4px}#studyModal input,#studyModal select,#studyModal textarea{padding:9px 10px}#studyModal textarea{height:58px;min-height:58px;max-height:58px}#studyModal .button.full{margin-top:2px}
+@media(max-height:620px){#studyModal form{padding:14px 18px;gap:7px}#studyModal .modal-title h2{font-size:21px;margin:2px 0}#studyModal .modal-title .eyebrow{display:none}#studyModal textarea{height:44px;min-height:44px;max-height:44px}}
