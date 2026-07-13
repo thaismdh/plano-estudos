@@ -49,7 +49,7 @@
     <nav class="tabs" aria-label="Seções do aplicativo">
       <button class="tab active" data-view="today">Hoje</button>
       <button class="tab" data-view="plan">Cronograma</button>
-      <button class="tab" data-view="courses">Cursos</button>
+      <button class="tab" data-view="courses">Jornadas</button>
       <button class="tab" data-view="settings">Dados</button>
     </nav>
 
@@ -74,10 +74,27 @@
 
     <section id="coursesView" class="view">
       <div class="section-heading">
-        <div><p class="eyebrow">Conteúdo</p><h2>Cursos e módulos</h2></div>
+        <div><p class="eyebrow">Visão de longo prazo</p><h2>Suas jornadas de aprendizado</h2></div>
         <button class="button primary" data-open-modal="course">+ Novo curso</button>
       </div>
-      <div id="courseGrid" class="course-grid"></div>
+      <article class="priority-banner">
+        <div class="priority-icon">F</div>
+        <div><span>Prioridade número 1</span><h3>FIAP — Pós-graduação</h3><p>O cronograma da pós sempre vem primeiro. As trilhas da ETEK entram nos dias complementares.</p></div>
+        <strong>FOCO PRINCIPAL</strong>
+      </article>
+      <div class="journey-columns">
+        <section class="journey-panel fiap-panel">
+          <div class="journey-heading"><div class="brand-mark fiap-mark">F</div><div><p class="eyebrow">Pós-graduação</p><h3>FIAP</h3></div></div>
+          <p class="journey-copy">Conteúdos acadêmicos, entregas e Tech Challenge organizados com prioridade.</p>
+          <div id="fiapCourses" class="journey-list"></div>
+        </section>
+        <section class="journey-panel etek-panel">
+          <div class="journey-heading"><div class="brand-mark etek-mark">E</div><div><p class="eyebrow">Formação contínua</p><h3>ETEK Academy</h3></div></div>
+          <p class="journey-copy">Uma sequência clara para evoluir sem dispersar: termine uma etapa antes de começar a próxima.</p>
+          <div id="etekRoadmap" class="roadmap"></div>
+        </section>
+      </div>
+      <div class="other-courses"><h3>Outros cursos</h3><div id="courseGrid" class="course-grid"></div></div>
     </section>
 
     <section id="settingsView" class="view">
