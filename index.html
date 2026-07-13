@@ -7,7 +7,7 @@
   <meta name="description" content="Horizonte: seu aprendizado, no seu ritmo.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
   <title>Horizonte — Plano de Estudos</title>
 </head>
 <body>
@@ -56,8 +56,9 @@
     <section id="todayView" class="view active">
       <div class="section-heading">
         <div><p class="eyebrow">Prioridade</p><h2>Próximos estudos</h2></div>
-        <button class="button primary" data-open-modal="session">+ Nova sessão</button>
+        <div class="quick-actions"><button class="button secondary" data-open-modal="study">✓ Estudei hoje</button><button class="button primary" data-open-modal="session">+ Nova sessão</button></div>
       </div>
+      <div id="weekendNotice" class="weekend-notice" hidden><strong>Fim de semana livre 🌅</strong><span>Seu descanso não quebra a sequência. O próximo estudo aparece no dia útil seguinte.</span></div>
       <div id="nextSessions" class="session-list"></div>
     </section>
 
@@ -65,6 +66,7 @@
       <div class="section-heading">
         <div><p class="eyebrow">Visão completa</p><h2>Cronograma</h2></div>
         <div class="filters">
+          <button id="weekdayBtn" class="button secondary">Organizar dias úteis</button>
           <select id="trackFilter" aria-label="Filtrar por curso"><option value="all">Todos os cursos</option></select>
           <select id="statusFilter" aria-label="Filtrar por status"><option value="all">Todos os status</option><option value="pending">Pendentes</option><option value="done">Concluídos</option></select>
         </div>
@@ -100,6 +102,7 @@
     <section id="settingsView" class="view">
       <div class="section-heading"><div><p class="eyebrow">Segurança</p><h2>Seus dados</h2></div></div>
       <div class="data-grid">
+        <article class="data-card calendar-card"><h3>Google Agenda</h3><p>Leve as sessões pendentes para sua agenda, sempre respeitando os dias úteis.</p><button id="calendarBtn" class="button primary">Adicionar à agenda</button></article>
         <article class="data-card"><h3>Exportar</h3><p>Baixe uma cópia do seu plano e progresso.</p><button id="exportBtn" class="button secondary">Baixar backup</button></article>
         <article class="data-card"><h3>Importar</h3><p>Restaure um backup salvo anteriormente.</p><label class="button secondary file-button">Escolher arquivo<input id="importInput" type="file" accept="application/json"></label></article>
         <article class="data-card danger"><h3>Recomeçar</h3><p>Apague alterações e volte ao plano inicial.</p><button id="resetBtn" class="button danger-button">Restaurar plano</button></article>
@@ -113,8 +116,18 @@
       <label>Curso<select name="course" id="sessionCourse" required></select></label>
       <label>Módulo<input name="module" required placeholder="Ex.: Fundamentos"></label>
       <label>Atividade<input name="title" required placeholder="Ex.: Listas e dicionários"></label>
-      <div class="form-row"><label>Data<input name="date" type="date" required></label><label>Duração (min)<input name="minutes" type="number" min="1" value="60" required></label></div>
+      <div class="form-row"><label>Data útil<input name="date" type="date" required></label><label>Duração<input name="duration" inputmode="numeric" value="60" placeholder="Ex.: 28:23 ou 60" required><small>Use minutos ou mm:ss para vídeos.</small></label></div>
       <button class="button primary full" type="submit">Adicionar ao plano</button>
+    </form>
+  </dialog>
+
+  <dialog id="studyModal">
+    <form id="studyForm" method="dialog">
+      <div class="modal-title"><div><p class="eyebrow">Progresso rápido</p><h2>Estudei hoje</h2></div><button type="button" class="icon-button close-modal" aria-label="Fechar">×</button></div>
+      <label>Sessão concluída<select name="session" id="studySession" required></select></label>
+      <label>Tempo estudado (min)<input name="actualMinutes" type="number" min="1" value="60" required></label>
+      <label>Anotação opcional<textarea name="note" rows="3" placeholder="O que você aprendeu hoje?"></textarea></label>
+      <button class="button primary full" type="submit">Registrar estudo</button>
     </form>
   </dialog>
 
@@ -128,6 +141,6 @@
   </dialog>
 
   <div id="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
