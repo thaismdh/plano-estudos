@@ -1,6 +1,8 @@
 const STORAGE_KEY='plano-estudos-v1';
-const DAILY_LIMIT_SECONDS=3600;
-const DAILY_PLAN_VERSION='daily-60-v1';
+const DAILY_TARGET_SECONDS=3600;
+const DAILY_GRACE_SECONDS=600;
+const DAILY_HARD_LIMIT_SECONDS=5400;
+const DAILY_PLAN_VERSION='daily-balanced-v2';
 const initialCourses=[
   {id:'fiap',name:'Big Data to Analytics',color:'#ed1c24',platform:'fiap',order:1},
   {id:'challenge',name:'Tech Challenge',color:'#f05a62',platform:'fiap',order:2},
@@ -112,8 +114,23 @@ function loadState(){try{return migrateState(JSON.parse(localStorage.getItem(STO
 function syncPythonPlan(saved){const current=saved.sessions.filter(s=>s.courseId==='python'),generated=current.filter(s=>s.source==='etek-python-v12'),legacy=current.filter(s=>legacyPythonTitles.has(s.title)),custom=current.filter(s=>s.source!=='etek-python-v12'&&!legacyPythonTitles.has(s.title)),previous=[...generated,...legacy],planned=pythonPlanSessions.map(plan=>{const old=previous.find(s=>s.id===plan.id)||previous.find(s=>s.date===plan.date);return{...structuredClone(plan),done:!!old?.done,completedAt:old?.completedAt||null,...(old?.rescheduled?{date:old.date,originalDate:old.originalDate||plan.date,rescheduled:true}:{}),...(old?.actualMinutes?{actualMinutes:old.actualMinutes}:{}),...(old?.note?{note:old.note}:{})}});saved.sessions=[...saved.sessions.filter(s=>s.courseId!=='python'),...custom,...planned]}
 function syncFiapDurations(saved){baseSessions.filter(base=>base.durationSeconds).forEach(base=>{const current=saved.sessions.find(s=>s.courseId==='fiap'&&s.title===base.title);if(current){current.minutes=base.minutes;current.durationSeconds=base.durationSeconds;current.durationSource=base.durationSource}else saved.sessions.push(structuredClone(base))})}
 function coursePriority(saved,s){if(s.courseId==='fiap')return 0;if(s.courseId==='challenge')return 1;return saved.courses.find(c=>c.id===s.courseId)?.platform==='etek'?2:3}
-function splitForDailyLimit(session){const seconds=session.durationSeconds||session.minutes*60,sourceId=session.dailyLimitSourceId||session.id,baseTitle=session.parentTitle||session.title,partLimit=session.courseId==='challenge'?1800:DAILY_LIMIT_SECONDS,count=Math.ceil(seconds/partLimit);if(count<=1)return[{...session,dailyLimitSourceId:sourceId,parentTitle:baseTitle,dailyPart:session.dailyPart||1,dailyPartCount:session.dailyPartCount||1}];let remaining=seconds;return Array.from({length:count},(_,index)=>{const partSeconds=Math.min(partLimit,remaining);remaining-=partSeconds;return{...session,id:`${sourceId}-hour-${index+1}`,title:`${baseTitle} — parte ${index+1}/${count}`,parentTitle:baseTitle,dailyLimitSourceId:sourceId,dailyPart:index+1,dailyPartCount:count,minutes:Math.ceil(partSeconds/60),durationSeconds:partSeconds,done:false,completedAt:null}})}
+function restoreWholePendingSessions(sessions){
+  const done=sessions.filter(s=>s.done),pending=sessions.filter(s=>!s.done),doneSources=new Set(done.map(s=>s.dailyLimitSourceId).filter(Boolean)),groups=new Map(),plain=[];
+  pending.forEach(s=>{if(s.dailyLimitSourceId&&s.dailyPartCount>1){if(!groups.has(s.dailyLimitSourceId))groups.set(s.dailyLimitSourceId,[]);groups.get(s.dailyLimitSourceId).push(s)}else plain.push(s)});
+  const restored=[];
+  groups.forEach((parts,sourceId)=>{
+    if(doneSources.has(sourceId)){restored.push(...parts);return}
+    parts.sort((a,b)=>(a.dailyPart||1)-(b.dailyPart||1));
+    const first=parts[0],seconds=parts.reduce((sum,s)=>sum+sessionSeconds(s),0),dates=parts.flatMap(s=>[s.plannedReleaseDate,s.originalDate,s.date]).filter(Boolean).sort();
+    const whole={...first,id:sourceId,title:first.parentTitle||first.title,minutes:Math.ceil(seconds/60),durationSeconds:seconds,date:dates[0]||first.date,originalDate:dates[0]||first.originalDate||first.date,done:false,completedAt:null};
+    delete whole.dailyLimitSourceId;delete whole.parentTitle;delete whole.dailyPart;delete whole.dailyPartCount;delete whole.rescheduled;delete whole.plannedReleaseDate;
+    restored.push(whole)
+  });
+  return[...done,...plain,...restored]
+}
+function splitForDailyLimit(session){const seconds=sessionSeconds(session),sourceId=session.dailyLimitSourceId||session.id,baseTitle=session.parentTitle||session.title,count=Math.ceil(seconds/DAILY_HARD_LIMIT_SECONDS);if(count<=1)return[{...session,dailyLimitSourceId:sourceId,parentTitle:baseTitle,dailyPart:session.dailyPart||1,dailyPartCount:session.dailyPartCount||1}];const base=Math.floor(seconds/count),extra=seconds%count;return Array.from({length:count},(_,index)=>{const partSeconds=base+(index<extra?1:0);return{...session,id:`${sourceId}-balanced-${index+1}`,title:`${baseTitle} — parte ${index+1}/${count}`,parentTitle:baseTitle,dailyLimitSourceId:sourceId,dailyPart:index+1,dailyPartCount:count,minutes:Math.ceil(partSeconds/60),durationSeconds:partSeconds,done:false,completedAt:null}})}
 function scheduleOneHourDays(saved,{initial=false}={}){
+  saved.sessions=restoreWholePendingSessions(saved.sessions);
   const today=isoDate(new Date()),done=saved.sessions.filter(s=>s.done),pending=saved.sessions.filter(s=>!s.done).flatMap(splitForDailyLimit),loads=new Map(),scheduled=[];
   done.filter(s=>s.date>=today).forEach(s=>loads.set(s.date,(loads.get(s.date)||0)+sessionSeconds(s)));
   let sequence=0;
@@ -121,21 +138,22 @@ function scheduleOneHourDays(saved,{initial=false}={}){
   function place(queue){
     let cursor=nextWeekday(queue.reduce((min,x)=>x.release<min?x.release:min,today));
     while(queue.length){
-      const capacity=DAILY_LIMIT_SECONDS-(loads.get(cursor)||0),due=queue.filter(x=>x.release<=cursor);
-      if(capacity<=0){cursor=nextWeekday(isoDate(addDays(localDate(cursor),1)));continue}
+      const load=loads.get(cursor)||0,due=queue.filter(x=>x.release<=cursor);
+      if(load>=DAILY_TARGET_SECONDS){cursor=nextWeekday(isoDate(addDays(localDate(cursor),1)));continue}
       if(!due.length){cursor=nextWeekday(queue.reduce((min,x)=>x.release<min?x.release:min,queue[0].release));continue}
-      const available=due.filter(x=>sessionSeconds(x.session)<=capacity&&!queue.some(y=>y.session.dailyLimitSourceId===x.session.dailyLimitSourceId&&(y.session.dailyPart||1)<(x.session.dailyPart||1)));
-      if(!available.length){cursor=nextWeekday(isoDate(addDays(localDate(cursor),1)));continue}
-      available.sort((a,b)=>coursePriority(saved,a.session)-coursePriority(saved,b.session)||a.release.localeCompare(b.release)||(a.session.dailyPart||1)-(b.session.dailyPart||1)||a.sequence-b.sequence);
-      const chosen=available[0],index=queue.indexOf(chosen);queue.splice(index,1);chosen.session.plannedReleaseDate=chosen.release;chosen.session.originalDate=chosen.session.originalDate||chosen.oldDate;chosen.session.rescheduled=chosen.oldDate!==cursor;chosen.session.date=cursor;scheduled.push(chosen.session);loads.set(cursor,(loads.get(cursor)||0)+sessionSeconds(chosen.session));
-      if(loads.get(cursor)>=DAILY_LIMIT_SECONDS)cursor=nextWeekday(isoDate(addDays(localDate(cursor),1)));
+      const eligible=due.filter(x=>!queue.some(y=>y.session.dailyLimitSourceId===x.session.dailyLimitSourceId&&(y.session.dailyPart||1)<(x.session.dailyPart||1)));
+      eligible.sort((a,b)=>coursePriority(saved,a.session)-coursePriority(saved,b.session)||a.release.localeCompare(b.release)||(a.session.dailyPart||1)-(b.session.dailyPart||1)||a.sequence-b.sequence);
+      const chosen=load===0?eligible.find(x=>sessionSeconds(x.session)<=DAILY_HARD_LIMIT_SECONDS):eligible.find(x=>load+sessionSeconds(x.session)<=DAILY_TARGET_SECONDS)||eligible.find(x=>load+sessionSeconds(x.session)<=DAILY_TARGET_SECONDS+DAILY_GRACE_SECONDS);
+      if(!chosen){cursor=nextWeekday(isoDate(addDays(localDate(cursor),1)));continue}
+      const index=queue.indexOf(chosen);queue.splice(index,1);chosen.session.plannedReleaseDate=chosen.release;chosen.session.originalDate=chosen.session.originalDate||chosen.oldDate;chosen.session.rescheduled=chosen.oldDate!==cursor;chosen.session.date=cursor;scheduled.push(chosen.session);loads.set(cursor,load+sessionSeconds(chosen.session));
+      if(loads.get(cursor)>=DAILY_TARGET_SECONDS)cursor=nextWeekday(isoDate(addDays(localDate(cursor),1)));
     }
   }
   place(all.filter(x=>coursePriority(saved,x.session)<=1));
   place(all.filter(x=>coursePriority(saved,x.session)>1));
   saved.sessions=[...done,...scheduled];saved.dailyPlanVersion=DAILY_PLAN_VERSION;return scheduled.filter(s=>s.rescheduled).length
 }
-function migrateState(saved){saved.courses=saved.courses||[];initialCourses.forEach(base=>{const found=saved.courses.find(c=>c.id===base.id);if(found)Object.assign(found,base);else saved.courses.push({...base})});saved.sessions=saved.sessions||[];saved.deadlines=saved.deadlines||[];initialDeadlines.forEach(base=>{if(!saved.deadlines.some(d=>d.id===base.id))saved.deadlines.push(structuredClone(base))});saved.theme=saved.theme||'light';if(saved.dailyPlanVersion!==DAILY_PLAN_VERSION){syncPythonPlan(saved);syncFiapDurations(saved);scheduleOneHourDays(saved,{initial:true})}return saved}
+function migrateState(saved){saved.courses=saved.courses||[];initialCourses.forEach(base=>{const found=saved.courses.find(c=>c.id===base.id);if(found)Object.assign(found,base);else saved.courses.push({...base})});saved.sessions=saved.sessions||[];saved.deadlines=saved.deadlines||[];initialDeadlines.forEach(base=>{if(!saved.deadlines.some(d=>d.id===base.id))saved.deadlines.push(structuredClone(base))});saved.theme=saved.theme||'light';if(saved.dailyPlanVersion!==DAILY_PLAN_VERSION){saved.sessions=restoreWholePendingSessions(saved.sessions);syncPythonPlan(saved);syncFiapDurations(saved);scheduleOneHourDays(saved,{initial:true})}return saved}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));render()}
 function course(id){return state.courses.find(c=>c.id===id)||{name:'Outro',color:'#7c5ce5'}}
 function fmtMinutes(m){const h=Math.floor(m/60),min=m%60;return h?`${h}h${min?` ${min}min`:''}`:`${min}min`}
@@ -197,13 +215,13 @@ $('#studyForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),s
 $('#courseForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),name=f.get('name');state.courses.push({id:`c${Date.now()}`,name,color:f.get('color'),platform:'other'});save();e.target.reset();$('#courseModal').close();toast('Curso criado')};
 $('#deadlineForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);state.deadlines.push({id:`d${Date.now()}`,title:String(f.get('title')).trim(),date:f.get('date'),platform:f.get('platform'),note:String(f.get('note')||'').trim(),done:false});save();e.target.reset();$('#deadlineModal').close();toast('Prazo adicionado')};
 $('#platformFilter').onchange=renderPlan;$('#trackFilter').onchange=renderPlan;$('#statusFilter').onchange=renderPlan;$('#themeBtn').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save()};
-$('#weekdayBtn').onclick=()=>{const moved=scheduleOneHourDays(state);save();toast(moved?`${moved} ${moved===1?'sessão reorganizada':'sessões reorganizadas'} com até 1h por dia`:'Seu cronograma já respeita 1h por dia')};
+$('#weekdayBtn').onclick=()=>{const moved=scheduleOneHourDays(state);save();toast(moved?`${moved} ${moved===1?'sessão reorganizada':'sessões reorganizadas'} com meta de 1h`:'Seu cronograma já está equilibrado')};
 function icsDate(date,time){return `${date.replaceAll('-','')}T${time.replace(':','')}00`}
 function icsEscape(v){return String(v).replaceAll('\\','\\\\').replaceAll(',','\\,').replaceAll(';','\\;').replaceAll('\n','\\n')}
 $('#calendarBtn').onclick=()=>{const pending=state.sessions.filter(s=>!s.done).sort(byPriority),lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Horizonte//Plano de Estudos//PT-BR','CALSCALE:GREGORIAN'];pending.forEach(s=>{const start='19:00',end=new Date(localDate(s.date));end.setHours(19,0,0,0);end.setMinutes(end.getMinutes()+s.minutes);const endTime=`${String(end.getHours()).padStart(2,'0')}:${String(end.getMinutes()).padStart(2,'0')}`,c=course(s.courseId),isFiap=c.platform==='fiap';lines.push('BEGIN:VEVENT',`UID:${s.id}@horizonte`, `DTSTART;TZID=America/Sao_Paulo:${icsDate(s.date,start)}`,`DTEND;TZID=America/Sao_Paulo:${icsDate(s.date,endTime)}`,`SUMMARY:${icsEscape(isFiap?'🎓 FIAP — '+s.title:'📘 '+s.title)}`,`DESCRIPTION:${icsEscape(`${c.name} • ${s.module}${isFiap?' • Prioridade FIAP':''}`)}`,'END:VEVENT')});lines.push('END:VCALENDAR');const blob=new Blob([lines.join('\r\n')],{type:'text/calendar'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='horizonte-google-agenda.ics';a.click();URL.revokeObjectURL(a.href);toast('Arquivo da agenda criado')};
 $('#exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`plano-estudos-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)};
 $('#importInput').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!data.courses||!data.sessions)throw 0;state=migrateState(data);save();toast('Backup restaurado')}catch{toast('Arquivo de backup inválido')}};
-$('#resetBtn').onclick=()=>{if(confirm('Restaurar o plano inicial e apagar alterações?')){state=migrateState(structuredClone(initialState));save();toast('Plano restaurado com até 1h por dia')}};
+$('#resetBtn').onclick=()=>{if(confirm('Restaurar o plano inicial e apagar alterações?')){state=migrateState(structuredClone(initialState));save();toast('Plano restaurado com meta de 1h por dia')}};
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;$('#installBtn').hidden=false});$('#installBtn').onclick=async()=>{if(installPrompt){installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('#installBtn').hidden=true}};
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js'));
 render();
